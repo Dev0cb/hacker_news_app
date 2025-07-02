@@ -7,13 +7,8 @@ class CommentTree extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: comments.length,
-      itemBuilder: (context, index) {
-        return _buildComment(context, comments[index], 0);
-      },
+    return ListView(
+      children: comments.map((c) => _buildComment(context, c, 0)).toList(),
     );
   }
 
@@ -42,7 +37,9 @@ class CommentTree extends StatelessWidget {
             ),
           ),
           if (comment.children.isNotEmpty)
-            CommentTree(comments: comment.children),
+            ...comment.children
+                .map((child) => _buildComment(context, child, depth + 1))
+                .toList(),
         ],
       ),
     );

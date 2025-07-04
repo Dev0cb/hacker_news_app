@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'views/home_page.dart';
 
-void main() {
-  runApp(const ProviderScope(child: MyApp()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialiser SharedPreferences pour la persistance
+  final prefs = await SharedPreferences.getInstance();
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        // Fournir SharedPreferences aux providers
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
+
+// Provider pour SharedPreferences
+final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
+  throw UnimplementedError();
+});
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -15,10 +34,10 @@ class MyApp extends StatelessWidget {
       title: 'Hacker News',
       theme: ThemeData(
         primarySwatch: Colors.red,
-        primaryColor: const Color(0xFFFF6600), // Orange Hacker News
+        primaryColor: const Color(0xFF8B0000), // Rouge foncé
         scaffoldBackgroundColor: Colors.black,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFFF6600),
+          backgroundColor: Color(0xFF8B0000),
           foregroundColor: Colors.white,
           elevation: 0,
           titleTextStyle: TextStyle(
@@ -34,7 +53,7 @@ class MyApp extends StatelessWidget {
         ),
         listTileTheme: const ListTileThemeData(
           textColor: Colors.white,
-          iconColor: Color(0xFFFF6600),
+          iconColor: Color(0xFF8B0000),
           tileColor: Color(0xFF1A1A1A),
         ),
         textTheme: const TextTheme(
@@ -53,7 +72,14 @@ class MyApp extends StatelessWidget {
           color: Color(0xFF333333),
           thickness: 1,
         ),
-        iconTheme: const IconThemeData(color: Color(0xFFFF6600)),
+        iconTheme: const IconThemeData(color: Color(0xFF8B0000)),
+        // Animations de page
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
       ),
       home: const HomePage(),
     );

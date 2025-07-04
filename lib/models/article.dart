@@ -20,6 +20,16 @@ class Article {
   });
 
   factory Article.fromJson(Map<String, dynamic> json) {
+    List<int> commentIds = [];
+    if (json['kids'] != null) {
+      try {
+        commentIds = (json['kids'] as List).map((e) => e as int).toList();
+      } catch (e) {
+        print('Article.fromJson: error parsing kids: $e');
+        commentIds = [];
+      }
+    }
+
     return Article(
       id: json['id'],
       title: json['title'] ?? '',
@@ -28,7 +38,7 @@ class Article {
       url: json['url'],
       score: json['score'] ?? 0,
       descendants: json['descendants'] ?? 0,
-      commentIds: json['kids'] != null ? List<int>.from(json['kids']) : [],
+      commentIds: commentIds,
     );
   }
 

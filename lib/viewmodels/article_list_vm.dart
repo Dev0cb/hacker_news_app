@@ -1,28 +1,157 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/repositories/article_repository.dart';
 import '../models/article.dart';
-import 'dart:developer';
+import '../core/app_state.dart';
 
-final articleListProvider =
-    StateNotifierProvider<ArticleListVM, AsyncValue<List<Article>>>((ref) {
-      return ArticleListVM();
-    });
+class ArticleListViewModel extends StateNotifier<ArticleListState> {
+  final ArticleRepository _repository;
+  final Ref _ref;
 
-class ArticleListVM extends StateNotifier<AsyncValue<List<Article>>> {
-  final ArticleRepository _repository = ArticleRepository();
+  static const int _pageSize = 20; // Articles par page
 
-  ArticleListVM() : super(const AsyncValue.loading()) {
-    fetchArticles();
+  ArticleListViewModel(this._repository, this._ref)
+      : super(ArticleListState.initial()) {
+    _loadInitialData();
   }
 
-  Future<void> fetchArticles() async {
+  Future<void> _loadInitialData() async {
+    final appState = _ref.read(appStateProvider);
+
+    // Charger la page courante depuis l'état persistant
+    await loadArticles(page: appState.currentPage, refresh: false);
+  }
+
+  Future<void> loadArticles({int page = 0, bool refresh = false}) async {
+    if (refresh) {
+      // Pull-to-refresh : remettre à zéro
+      state = state.copyWith(isLoading: true, error: null);
+      page = 0;
+    } else if (page == 0) {
+      // Premier chargement
+      state = state.copyWith(isLoading: true, error: null);
+    } else {
+      // Pagination : ajouter à la liste existante
+      state = state.copyWith(isLoadingMore: true);
+    }
+
     try {
-      state = const AsyncValue.loading();
-      final articles = await _repository.fetchArticles();
-      state = AsyncValue.data(articles);
-    } catch (e, st) {
-      log('Erreur dans fetchArticles: $e', stackTrace: st);
-      state = AsyncValue.error(e, st);
+      final sortBy = _ref.read(appStateProvider).sortBy;
+      final articles = await _repository.getTopStories(
+        page: page,
+        pageSize: _pageSize,
+        sortBy: sortBy,
+      );
+
+      if (refresh || page == 0) {
+        // Remplacer la liste
+        state = state.copyWith(
+          articles: articles,
+          currentPage: page,
+          isLoading: false,
+          isLoadingMore: false,
+          hasMore: articles.length == _pageSize,
+        );
+      } else {
+        // Ajouter à la liste existante
+        final newArticles = [...state.articles, ...articles];
+        state = state.copyWith(
+          articles: newArticles,
+          currentPage: page,
+          isLoading: false,
+          isLoadingMore: false,
+          hasMore: articles.length == _pageSize,
+        );
+      }
+
+      // Mettre à jour l'état global
+      _ref.read(appStateProvider.notifier).setCurrentPage(page);
+      if (refresh) {
+        _ref
+            .read(appStateProvider.notifier)
+            .setLastRefreshTime(DateTime.now().millisecondsSinceEpoch);
+      }
+    } catch (e) {
+      state = state.copyWith(
+        error: e.toString(),
+        isLoading: false,
+        isLoadingMore: false,
+      );
+      print('Erreur dans ArticleListViewModel: $e');
     }
   }
+
+  Future<void> refresh() async {
+    await loadArticles(page: 0, refresh: true);
+  }
+
+  Future<void> loadMore() async {
+    if (!state.hasMore || state.isLoadingMore) return;
+    await loadArticles(page: state.currentPage + 1);
+  }
+
+  Future<void> toggleFavorite(Article article) async {
+    final isFavorite = _ref.read(isFavoriteProvider(article.id));
+
+    if (isFavorite) {
+      await _ref.read(appStateProvider.notifier).removeFavorite(article.id);
+    } else {
+      await _ref.read(appStateProvider.notifier).addFavorite(article);
+    }
+  }
+
+  Future<void> changeSortBy(String sortBy) async {
+    _ref.read(appStateProvider.notifier).setSortBy(sortBy);
+    await loadArticles(page: 0, refresh: true);
+  }
 }
+
+class ArticleListState {
+  final List<Article> articles;
+  final bool isLoading;
+  final bool isLoadingMore;
+  final bool hasMore;
+  final String? error;
+  final int currentPage;
+
+  const ArticleListState({
+    required this.articles,
+    required this.isLoading,
+    required this.isLoadingMore,
+    required this.hasMore,
+    this.error,
+    required this.currentPage,
+  });
+
+  factory ArticleListState.initial() => const ArticleListState(
+        articles: [],
+        isLoading: false,
+        isLoadingMore: false,
+        hasMore: true,
+        currentPage: 0,
+      );
+
+  ArticleListState copyWith({
+    List<Article>? articles,
+    bool? isLoading,
+    bool? isLoadingMore,
+    bool? hasMore,
+    String? error,
+    int? currentPage,
+  }) {
+    return ArticleListState(
+      articles: articles ?? this.articles,
+      isLoading: isLoading ?? this.isLoading,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      hasMore: hasMore ?? this.hasMore,
+      error: error ?? this.error,
+      currentPage: currentPage ?? this.currentPage,
+    );
+  }
+}
+
+// Provider pour le ViewModel
+final articleListViewModelProvider =
+    StateNotifierProvider<ArticleListViewModel, ArticleListState>((ref) {
+  final repository = ref.watch(articleRepositoryProvider);
+  return ArticleListViewModel(repository, ref);
+});

@@ -54,6 +54,44 @@ class DatabaseHelper {
     return maps.map((json) => Article.fromJson(json)).toList();
   }
 
+  Future<List<Article>> getArticlesPaginated({
+    int page = 0,
+    int pageSize = 20,
+    String sortBy = 'score',
+  }) async {
+    try {
+      final db = await instance.database;
+
+      String orderBy;
+      switch (sortBy) {
+        case 'score':
+          orderBy = 'score DESC';
+          break;
+        case 'time':
+          orderBy = 'time DESC';
+          break;
+        case 'comments':
+          orderBy = 'descendants DESC';
+          break;
+        default:
+          orderBy = 'score DESC';
+      }
+
+      final offset = page * pageSize;
+      final maps = await db.query(
+        'articles',
+        orderBy: orderBy,
+        limit: pageSize,
+        offset: offset,
+      );
+
+      return maps.map((json) => Article.fromJson(json)).toList();
+    } catch (e) {
+      print('Erreur lors de la récupération des articles paginés: $e');
+      return [];
+    }
+  }
+
   Future<void> deleteArticle(int id) async {
     final db = await instance.database;
     await db.delete('articles', where: 'id = ?', whereArgs: [id]);
@@ -61,9 +99,12 @@ class DatabaseHelper {
 
   Future<void> addFavori(int id) async {
     final db = await instance.database;
-    await db.insert('favoris', {
-      'id': id,
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(
+        'favoris',
+        {
+          'id': id,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> removeFavori(int id) async {

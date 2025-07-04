@@ -39,4 +39,9 @@ class Comment {
       'kids': childIds,
     };
   }
+
+  @override
+  String toString() {
+    return 'Comment{id: $id, author: $author, text: ${text?.substring(0, text!.length > 50 ? 50 : text!.length)}${text!.length > 50 ? '...' : ''}, childIds: ${childIds.length}}';
+  }
 }

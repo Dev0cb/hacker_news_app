@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/article.dart';
 import '../main.dart';
+import 'package:flutter/foundation.dart';
 
 // Provider pour la persistance d'état
 class AppStateNotifier extends StateNotifier<AppState> {
@@ -32,7 +33,7 @@ class AppStateNotifier extends StateNotifier<AppState> {
       );
     } catch (e) {
       // En cas d'erreur, garder l'état initial
-      print('Erreur lors du chargement de l\'état: $e');
+      debugPrint('Erreur lors du chargement de l\'état: $e');
     }
   }
 
@@ -48,15 +49,17 @@ class AppStateNotifier extends StateNotifier<AppState> {
       await _prefs.setInt('currentPage', state.currentPage);
       await _prefs.setString('sortBy', state.sortBy);
     } catch (e) {
-      print('Erreur lors de la sauvegarde de l\'état: $e');
+      debugPrint('Erreur lors de la sauvegarde de l\'état: $e');
     }
   }
 
   // Ajouter un favori avec optimistic update
   Future<void> addFavorite(Article article) async {
     try {
+      debugPrint('AppState: Ajout de l\'article ${article.id} aux favoris');
       // Optimistic update
-      state = state.copyWith(favorites: [...state.favorites, article]);
+      final updatedFavorites = [...state.favorites, article];
+      state = state.copyWith(favorites: updatedFavorites);
 
       // Sauvegarder
       await _saveState();
@@ -65,25 +68,26 @@ class AppStateNotifier extends StateNotifier<AppState> {
       state = state.copyWith(
         favorites: state.favorites.where((a) => a.id != article.id).toList(),
       );
-      print('Erreur lors de l\'ajout du favori: $e');
+      debugPrint('Erreur lors de l\'ajout du favori: $e');
     }
   }
 
   // Supprimer un favori avec optimistic update
   Future<void> removeFavorite(int articleId) async {
     try {
+      debugPrint('AppState: Suppression de l\'article $articleId des favoris');
       final removedArticle =
           state.favorites.firstWhere((a) => a.id == articleId);
 
       // Optimistic update
-      state = state.copyWith(
-        favorites: state.favorites.where((a) => a.id != articleId).toList(),
-      );
+      final updatedFavorites =
+          state.favorites.where((a) => a.id != articleId).toList();
+      state = state.copyWith(favorites: updatedFavorites);
 
       // Sauvegarder
       await _saveState();
     } catch (e) {
-      print('Erreur lors de la suppression du favori: $e');
+      debugPrint('Erreur lors de la suppression du favori: $e');
     }
   }
 
@@ -95,6 +99,7 @@ class AppStateNotifier extends StateNotifier<AppState> {
 
   // Mettre à jour le tri
   void setSortBy(String sortBy) {
+    debugPrint('AppState: Changement du tri vers $sortBy');
     state = state.copyWith(sortBy: sortBy);
     _saveState();
   }

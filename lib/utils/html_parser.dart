@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart';
 
@@ -12,7 +13,7 @@ class HtmlParser {
       final document = html_parser.parse(htmlText);
       return _parseElement(document.body ?? document.documentElement!);
     } catch (e) {
-      print('HtmlParser: Erreur lors du parsing HTML: $e');
+      debugPrint('HtmlParser: Erreur lors du parsing HTML: $e');
       return htmlText; // Retourner le texte original en cas d'erreur
     }
   }
@@ -129,7 +130,7 @@ class HtmlParser {
 
       return links;
     } catch (e) {
-      print('HtmlParser: Erreur lors de l\'extraction des liens: $e');
+      debugPrint('HtmlParser: Erreur lors de l\'extraction des liens: $e');
       return [];
     }
   }
@@ -153,7 +154,7 @@ class HtmlParser {
 
       return images;
     } catch (e) {
-      print('HtmlParser: Erreur lors de l\'extraction des images: $e');
+      debugPrint('HtmlParser: Erreur lors de l\'extraction des images: $e');
       return [];
     }
   }

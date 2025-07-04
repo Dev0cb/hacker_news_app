@@ -4,29 +4,19 @@ import '../api/hacker_news_api.dart';
 import '../db/database_helper.dart';
 import '../../models/article.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 
 class ArticleRepository {
   final _dbHelper = DatabaseHelper.instance;
   final _api = HackerNewsApi();
 
-  Future<List<Article>> fetchArticles() async {
-    // Toujours charger depuis l'API pour avoir les commentIds
-    final remote = await _api.fetchTopStories();
-    // Sauvegarder en DB pour le cache (sans commentIds)
-    for (final article in remote) {
-      await _dbHelper.insertArticle(article);
-    }
-    return remote;
-  }
-
-  // Nouvelle méthode avec pagination et tri
   Future<List<Article>> getTopStories({
     int page = 0,
     int pageSize = 20,
     String sortBy = 'score',
   }) async {
     try {
-      // Toujours charger depuis l'API pour avoir les commentIds
+      // Charger depuis l'API
       final remote = await _api.fetchTopStories();
 
       // Trier selon le critère
@@ -37,15 +27,27 @@ class ArticleRepository {
       final paginatedArticles =
           sortedArticles.skip(startIndex).take(pageSize).toList();
 
-      // Sauvegarder en DB pour le cache (sans commentIds)
-      for (final article in paginatedArticles) {
-        await _dbHelper.insertArticle(article);
+      // Sauvegarder en DB
+      if (paginatedArticles.isNotEmpty) {
+        await _dbHelper.insertArticles(paginatedArticles);
       }
 
       return paginatedArticles;
     } catch (e) {
-      print('ArticleRepository: error loading articles: $e');
-      throw Exception('Erreur lors du chargement des articles: $e');
+      debugPrint(
+          'ArticleRepository: Erreur lors du chargement des articles: $e');
+
+      // En cas d'erreur, essayer de charger depuis la DB
+      try {
+        return await _dbHelper.getArticles(
+          limit: pageSize,
+          offset: page * pageSize,
+          sortBy: sortBy,
+        );
+      } catch (dbError) {
+        debugPrint('ArticleRepository: Erreur DB: $dbError');
+        return [];
+      }
     }
   }
 
@@ -67,15 +69,22 @@ class ArticleRepository {
     return articles;
   }
 
-  Future<void> addFavori(int id) => _dbHelper.addFavori(id);
-  Future<void> removeFavori(int id) => _dbHelper.removeFavori(id);
-  Future<List<int>> getFavoris() => _dbHelper.getFavoris();
+  Future<List<Article>> getFavorites() async {
+    try {
+      return await _dbHelper.getFavorites();
+    } catch (e) {
+      debugPrint(
+          'ArticleRepository: Erreur lors de la récupération des favoris: $e');
+      return [];
+    }
+  }
 
-  Future<void> cleanObsoleteArticles() async {
-    await _dbHelper.cleanObsoleteArticles((id) async {
-      final article = await _api.fetchArticle(id);
-      return article != null;
-    });
+  Future<void> toggleFavorite(int articleId, bool isFavorite) async {
+    try {
+      await _dbHelper.toggleFavorite(articleId, isFavorite);
+    } catch (e) {
+      debugPrint('ArticleRepository: Erreur lors du toggle favori: $e');
+    }
   }
 }
 

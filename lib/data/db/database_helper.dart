@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../../models/article.dart';
@@ -5,6 +6,7 @@ import '../../models/article.dart';
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
+  static const String _tableName = 'articles';
 
   DatabaseHelper._init();
 
@@ -17,19 +19,34 @@ class DatabaseHelper {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+
+    // Supprimer la base de données existante pour éviter les conflits
+    try {
+      await deleteDatabase(path);
+      debugPrint('DatabaseHelper: Ancienne base de données supprimée');
+    } catch (e) {
+      debugPrint('DatabaseHelper: Erreur lors de la suppression: $e');
+    }
+
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: _createDB,
+    );
   }
 
   Future _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE articles (
+      CREATE TABLE $_tableName(
         id INTEGER PRIMARY KEY,
-        title TEXT,
-        author TEXT,
-        time INTEGER,
+        title TEXT NOT NULL,
+        author TEXT NOT NULL,
         url TEXT,
-        score INTEGER,
-        descendants INTEGER
+        score INTEGER NOT NULL,
+        descendants INTEGER NOT NULL,
+        time INTEGER NOT NULL,
+        commentIds TEXT,
+        isFavorite INTEGER DEFAULT 0
       )
     ''');
     await db.execute('''
@@ -37,64 +54,152 @@ class DatabaseHelper {
         id INTEGER PRIMARY KEY
       )
     ''');
+    debugPrint('DatabaseHelper: Nouvelle base de données créée avec succès');
   }
 
   Future<void> insertArticle(Article article) async {
-    final db = await instance.database;
+    final db = await database;
     await db.insert(
-      'articles',
-      article.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
+        _tableName,
+        {
+          'id': article.id,
+          'title': article.title,
+          'author': article.author,
+          'url': article.url,
+          'score': article.score,
+          'descendants': article.descendants,
+          'time': article.time,
+          'commentIds': article.commentIds.join(','),
+          'isFavorite': 0, // Par défaut non favori
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> insertArticles(List<Article> articles) async {
+    final db = await database;
+    final batch = db.batch();
+
+    for (final article in articles) {
+      batch.insert(
+          _tableName,
+          {
+            'id': article.id,
+            'title': article.title,
+            'author': article.author,
+            'url': article.url,
+            'score': article.score,
+            'descendants': article.descendants,
+            'time': article.time,
+            'commentIds': article.commentIds.join(','),
+            'isFavorite': 0, // Par défaut non favori
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+
+    await batch.commit();
+  }
+
+  Future<List<Article>> getArticles({
+    int limit = 20,
+    int offset = 0,
+    String sortBy = 'score',
+  }) async {
+    final db = await database;
+    String orderBy;
+
+    switch (sortBy) {
+      case 'score':
+        orderBy = 'score DESC';
+        break;
+      case 'time':
+        orderBy = 'time DESC';
+        break;
+      case 'comments':
+        orderBy = 'descendants DESC';
+        break;
+      default:
+        orderBy = 'score DESC';
+    }
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      _tableName,
+      orderBy: orderBy,
+      limit: limit,
+      offset: offset,
+    );
+
+    return List.generate(maps.length, (i) {
+      final map = maps[i];
+      final commentIdsString = map['commentIds'] as String?;
+      final commentIds =
+          commentIdsString?.split(',').map((id) => int.parse(id)).toList() ??
+              [];
+
+      return Article(
+        id: map['id'],
+        title: map['title'],
+        author: map['author'],
+        url: map['url'],
+        score: map['score'],
+        descendants: map['descendants'],
+        time: map['time'],
+        commentIds: commentIds,
+      );
+    });
+  }
+
+  Future<List<Article>> getFavorites() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _tableName,
+      where: 'isFavorite = ?',
+      whereArgs: [1],
+      orderBy: 'time DESC',
+    );
+
+    return List.generate(maps.length, (i) {
+      final map = maps[i];
+      final commentIdsString = map['commentIds'] as String?;
+      final commentIds =
+          commentIdsString?.split(',').map((id) => int.parse(id)).toList() ??
+              [];
+
+      return Article(
+        id: map['id'],
+        title: map['title'],
+        author: map['author'],
+        url: map['url'],
+        score: map['score'],
+        descendants: map['descendants'],
+        time: map['time'],
+        commentIds: commentIds,
+      );
+    });
+  }
+
+  Future<void> toggleFavorite(int articleId, bool isFavorite) async {
+    final db = await instance.database;
+    await db.update(
+      _tableName,
+      {'isFavorite': isFavorite ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [articleId],
     );
   }
 
-  Future<List<Article>> getArticles() async {
+  Future<void> cleanNonFavorites() async {
     final db = await instance.database;
-    final maps = await db.query('articles');
-    return maps.map((json) => Article.fromJson(json)).toList();
+    final deleted = await db.delete(
+      _tableName,
+      where: 'isFavorite = ?',
+      whereArgs: [0],
+    );
+    debugPrint('DatabaseHelper: $deleted articles non-favoris supprimés');
   }
 
-  Future<List<Article>> getArticlesPaginated({
-    int page = 0,
-    int pageSize = 20,
-    String sortBy = 'score',
-  }) async {
-    try {
-      final db = await instance.database;
-
-      String orderBy;
-      switch (sortBy) {
-        case 'score':
-          orderBy = 'score DESC';
-          break;
-        case 'time':
-          orderBy = 'time DESC';
-          break;
-        case 'comments':
-          orderBy = 'descendants DESC';
-          break;
-        default:
-          orderBy = 'score DESC';
-      }
-
-      final offset = page * pageSize;
-      final maps = await db.query(
-        'articles',
-        orderBy: orderBy,
-        limit: pageSize,
-        offset: offset,
-      );
-
-      return maps.map((json) => Article.fromJson(json)).toList();
-    } catch (e) {
-      print('Erreur lors de la récupération des articles paginés: $e');
-      return [];
-    }
-  }
-
-  Future<void> deleteArticle(int id) async {
+  Future<void> close() async {
     final db = await instance.database;
-    await db.delete('articles', where: 'id = ?', whereArgs: [id]);
+    await db.close();
   }
 
   Future<void> addFavori(int id) async {
@@ -116,22 +221,5 @@ class DatabaseHelper {
     final db = await instance.database;
     final maps = await db.query('favoris');
     return maps.map((e) => e['id'] as int).toList();
-  }
-
-  Future<void> cleanObsoleteArticles(
-    Future<bool> Function(int id) isAvailable,
-  ) async {
-    final db = await instance.database;
-    final favIds = await getFavoris();
-    final maps = await db.query('articles');
-    for (final map in maps) {
-      final id = map['id'] as int;
-      if (!favIds.contains(id)) {
-        final available = await isAvailable(id);
-        if (!available) {
-          await deleteArticle(id);
-        }
-      }
-    }
   }
 }

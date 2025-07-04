@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart';
+import 'package:flutter/foundation.dart';
 
 class ArticleContentService {
   static const Map<String, String> _headers = {
@@ -17,7 +17,7 @@ class ArticleContentService {
 
   Future<ArticleContent?> fetchArticleContent(String url) async {
     try {
-      print('ArticleContentService: Récupération du contenu de $url');
+      debugPrint('ArticleContentService: Récupération du contenu de $url');
 
       final response = await http
           .get(
@@ -30,12 +30,12 @@ class ArticleContentService {
         final document = html_parser.parse(response.body);
         return _parseArticleContent(document, url);
       } else {
-        print(
+        debugPrint(
             'ArticleContentService: Erreur HTTP ${response.statusCode} pour $url');
         return null;
       }
     } catch (e) {
-      print(
+      debugPrint(
           'ArticleContentService: Erreur lors de la récupération du contenu: $e');
       return null;
     }
@@ -71,7 +71,8 @@ class ArticleContentService {
         url: url,
       );
     } catch (e) {
-      print('ArticleContentService: Erreur lors du parsing du contenu: $e');
+      debugPrint(
+          'ArticleContentService: Erreur lors du parsing du contenu: $e');
       return null;
     }
   }
@@ -283,7 +284,7 @@ class ArticleContentService {
         final resolvedUri = baseUri.resolve(url);
         return resolvedUri.toString();
       } catch (e) {
-        print(
+        debugPrint(
             'ArticleContentService: Erreur lors de la résolution de l\'URL $url: $e');
       }
     }

@@ -4,7 +4,6 @@ import '../models/comment.dart';
 import '../data/api/hacker_news_api.dart';
 import '../views/comment_detail_page.dart';
 import '../widgets/formatted_text.dart';
-import 'skeleton_loading.dart';
 
 class CommentTree extends ConsumerWidget {
   final List<int> commentIds;
@@ -174,7 +173,7 @@ class CommentTree extends ConsumerWidget {
             color: const Color(0xFF1A1A1A),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: const Color(0xFF8B0000).withOpacity(0.3),
+              color: const Color(0xFF8B0000).withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -184,7 +183,7 @@ class CommentTree extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B0000).withOpacity(0.1),
+                  color: const Color(0xFF8B0000).withValues(alpha: 0.1),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(8),
                     topRight: Radius.circular(8),
@@ -212,14 +211,14 @@ class CommentTree extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Icon(
                       Icons.schedule,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       size: 14,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       _formatTime(comment.time),
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         fontSize: 12,
                       ),
                     ),
@@ -227,21 +226,21 @@ class CommentTree extends ConsumerWidget {
                       const Spacer(),
                       Icon(
                         Icons.reply,
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                         size: 16,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '${comment.childIds.length}',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                           fontSize: 12,
                         ),
                       ),
                       const SizedBox(width: 4),
                       Icon(
                         Icons.arrow_forward_ios,
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         size: 12,
                       ),
                     ],
@@ -267,7 +266,7 @@ class CommentTree extends ConsumerWidget {
                   child: Text(
                     '[Commentaire supprimé]',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
                     ),

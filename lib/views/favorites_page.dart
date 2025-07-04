@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/app_state.dart';
-import '../widgets/skeleton_loading.dart';
+import '../models/article.dart';
 import 'article_detail_page.dart';
 
 class FavoritesPage extends ConsumerWidget {
@@ -10,21 +9,23 @@ class FavoritesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final favorites = ref.watch(favoritesProvider);
+    final favorites = ref.watch(appStateProvider).favorites;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Favoris'),
+        backgroundColor: const Color(0xFF8B0000),
+        foregroundColor: Colors.white,
       ),
       body: favorites.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.star_border,
-                    color: Color(0xFF8B0000),
+                  Icon(
+                    Icons.star_outline,
                     size: 64,
+                    color: Colors.white.withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -32,30 +33,123 @@ class FavoritesPage extends ConsumerWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Ajoutez des articles à vos favoris',
+                    'Ajoutez des articles à vos favoris pour les retrouver ici',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
             )
           : ListView.builder(
+              padding: const EdgeInsets.all(16),
               itemCount: favorites.length,
               itemBuilder: (context, index) {
                 final article = favorites[index];
                 return Card(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: InkWell(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  color: const Color(0xFF1A1A1A),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(16),
+                    title: Text(
+                      article.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.person,
+                              size: 16,
+                              color: Colors.white.withValues(alpha: 0.7),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              article.author,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Icon(
+                              Icons.schedule,
+                              size: 16,
+                              color: Colors.white.withValues(alpha: 0.7),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              _formatTime(article.time),
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.trending_up,
+                              size: 16,
+                              color: const Color(0xFF8B0000),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${article.score}',
+                              style: const TextStyle(
+                                color: Color(0xFF8B0000),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Icon(
+                              Icons.comment,
+                              size: 16,
+                              color: const Color(0xFF8B0000),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${article.descendants}',
+                              style: const TextStyle(
+                                color: Color(0xFF8B0000),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.star,
+                        color: Color(0xFF8B0000),
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        ref
+                            .read(appStateProvider.notifier)
+                            .removeFavorite(article.id);
+                      },
+                    ),
                     onTap: () {
-                      HapticFeedback.selectionClick();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -64,73 +158,26 @@ class FavoritesPage extends ConsumerWidget {
                         ),
                       );
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  article.title,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.star,
-                                  color: Color(0xFF8B0000),
-                                  size: 32,
-                                ),
-                                onPressed: () {
-                                  HapticFeedback.lightImpact();
-                                  ref
-                                      .read(appStateProvider.notifier)
-                                      .removeFavorite(article.id);
-                                },
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Text(
-                                'par ${article.author}',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.7),
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Text(
-                                'Score: ${article.score}',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.7),
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Text(
-                                '${article.descendants} commentaires',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.7),
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                 );
               },
             ),
     );
+  }
+
+  String _formatTime(int timestamp) {
+    final now = DateTime.now();
+    final articleTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    final difference = now.difference(articleTime);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays}j';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m';
+    } else {
+      return 'maintenant';
+    }
   }
 }

@@ -1,6 +1,7 @@
 // Exemple d'endpoint : https://hacker-news.firebaseio.com/v0/item/8863.json
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../models/article.dart';
 import '../../models/comment.dart';
@@ -22,7 +23,7 @@ class HackerNewsApi {
 
       return validArticles;
     } catch (e) {
-      print('HackerNewsApi: error in fetchTopStories: $e');
+      debugPrint('HackerNewsApi: error in fetchTopStories: $e');
       throw Exception('Erreur lors du chargement des articles: $e');
     }
   }
@@ -49,14 +50,14 @@ class HackerNewsApi {
       }
       return null;
     } catch (e) {
-      print('Erreur lors du chargement de l\'article $id: $e');
+      debugPrint('Erreur lors du chargement de l\'article $id: $e');
       return null;
     }
   }
 
   Future<List<Comment>> fetchComments(List<int> ids) async {
     try {
-      print('HackerNewsApi: Chargement de ${ids.length} commentaires');
+      debugPrint('HackerNewsApi: Chargement de ${ids.length} commentaires');
       List<Comment> comments = [];
 
       // Utiliser Future.wait pour charger les commentaires en parallèle
@@ -70,19 +71,19 @@ class HackerNewsApi {
                 data['deleted'] != true &&
                 data['dead'] != true) {
               final comment = Comment.fromJson(data);
-              print(
+              debugPrint(
                   'HackerNewsApi: Commentaire chargé: ${comment.id} par ${comment.author}');
               return comment;
             } else {
-              print(
+              debugPrint(
                   'HackerNewsApi: Commentaire $id ignoré (type: ${data?['type']}, deleted: ${data?['deleted']}, dead: ${data?['dead']})');
             }
           } else {
-            print(
+            debugPrint(
                 'HackerNewsApi: Erreur HTTP ${resp.statusCode} pour le commentaire $id');
           }
         } catch (e) {
-          print(
+          debugPrint(
               'HackerNewsApi: Erreur lors du chargement du commentaire $id: $e');
         }
         return null;
@@ -91,11 +92,12 @@ class HackerNewsApi {
       final results = await Future.wait(futures);
       comments = results.whereType<Comment>().toList();
 
-      print(
+      debugPrint(
           'HackerNewsApi: ${comments.length} commentaires chargés avec succès');
       return comments;
     } catch (e) {
-      print('HackerNewsApi: Erreur lors du chargement des commentaires: $e');
+      debugPrint(
+          'HackerNewsApi: Erreur lors du chargement des commentaires: $e');
       return [];
     }
   }
@@ -131,13 +133,13 @@ class HackerNewsApi {
             }
           }
         } catch (e) {
-          print('Erreur lors du chargement de la réponse $id: $e');
+          debugPrint('Erreur lors du chargement de la réponse $id: $e');
           // Continuer avec les autres réponses
         }
       }
       return comments;
     } catch (e) {
-      print('Erreur lors du chargement des réponses: $e');
+      debugPrint('Erreur lors du chargement des réponses: $e');
       return [];
     }
   }

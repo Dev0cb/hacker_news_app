@@ -27,7 +27,7 @@ class ArticleDetailPage extends ConsumerWidget {
               isFav ? Icons.star : Icons.star_outline,
               color: isFav
                   ? const Color(0xFF8B0000)
-                  : Colors.white.withOpacity(0.7),
+                  : Colors.white.withValues(alpha: 0.7),
               size: 32,
             ),
             onPressed: () {

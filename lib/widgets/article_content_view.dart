@@ -77,9 +77,9 @@ class _ArticleContentViewState extends State<ArticleContentView> {
             size: 64,
           ),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Erreur lors du chargement',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -89,7 +89,7 @@ class _ArticleContentViewState extends State<ArticleContentView> {
           Text(
             error,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 14,
             ),
             textAlign: TextAlign.center,
@@ -136,7 +136,7 @@ class _ArticleContentViewState extends State<ArticleContentView> {
           Text(
             'Le contenu de cet article ne peut pas être affiché.',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 14,
             ),
             textAlign: TextAlign.center,
@@ -205,7 +205,7 @@ class _ArticleContentViewState extends State<ArticleContentView> {
               color: const Color(0xFF1A1A1A),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: const Color(0xFF8B0000).withOpacity(0.3),
+                color: const Color(0xFF8B0000).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -253,7 +253,7 @@ class _ArticleContentViewState extends State<ArticleContentView> {
               color: const Color(0xFF1A1A1A),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: const Color(0xFF8B0000).withOpacity(0.3),
+                color: const Color(0xFF8B0000).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -301,7 +301,7 @@ class _ArticleContentViewState extends State<ArticleContentView> {
               color: const Color(0xFF1A1A1A),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: const Color(0xFF8B0000).withOpacity(0.3),
+                color: const Color(0xFF8B0000).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -381,7 +381,7 @@ class _ArticleContentViewState extends State<ArticleContentView> {
               color: const Color(0xFF1A1A1A),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: const Color(0xFF8B0000).withOpacity(0.3),
+                color: const Color(0xFF8B0000).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -447,7 +447,7 @@ class _ArticleContentViewState extends State<ArticleContentView> {
                   Text(
                     '... et ${content.links.length - 5} autres liens',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 12,
                       fontStyle: FontStyle.italic,
                     ),

@@ -59,7 +59,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                   color: const Color(0xFF1A1A1A),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: const Color(0xFF8B0000).withOpacity(0.3),
+                    color: const Color(0xFF8B0000).withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -68,9 +68,9 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.article,
-                          color: const Color(0xFF8B0000),
+                          color: Color(0xFF8B0000),
                           size: 16,
                         ),
                         const SizedBox(width: 8),
@@ -98,7 +98,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                             children: [
                               Icon(
                                 Icons.reply,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                                 size: 14,
                               ),
                               const SizedBox(width: 8),
@@ -106,7 +106,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                                 child: Text(
                                   '${comment.author}: ${comment.text?.substring(0, comment.text!.length > 50 ? 50 : comment.text!.length)}${comment.text!.length > 50 ? '...' : ''}',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                     fontSize: 12,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -136,7 +136,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF8B0000).withOpacity(0.2),
+                      color: const Color(0xFF8B0000).withValues(alpha: 0.2),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(8),
                         topRight: Radius.circular(8),
@@ -144,9 +144,9 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                     ),
                     child: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.person,
-                          color: const Color(0xFF8B0000),
+                          color: Color(0xFF8B0000),
                           size: 16,
                         ),
                         const SizedBox(width: 8),
@@ -164,14 +164,14 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                         const SizedBox(width: 8),
                         Icon(
                           Icons.schedule,
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha: 0.5),
                           size: 14,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           _formatTime(widget.comment.time),
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                             fontSize: 12,
                           ),
                         ),
@@ -193,12 +193,12 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                       ),
                     )
                   else
-                    Padding(
-                      padding: const EdgeInsets.all(16),
+                    const Padding(
+                      padding: EdgeInsets.all(16),
                       child: Text(
                         '[Commentaire supprimé]',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white,
                           fontSize: 16,
                           fontStyle: FontStyle.italic,
                         ),

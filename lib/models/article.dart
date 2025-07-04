@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class Article {
   final int id;
   final String title;
@@ -25,7 +27,7 @@ class Article {
       try {
         commentIds = (json['kids'] as List).map((e) => e as int).toList();
       } catch (e) {
-        print('Article.fromJson: error parsing kids: $e');
+        debugPrint('Article.fromJson: error parsing kids: $e');
         commentIds = [];
       }
     }

@@ -69,14 +69,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget _buildSortOption(String value, String label, String currentSort) {
     final isSelected = currentSort == value;
     return ListTile(
-      title: Text(label, style: TextStyle(color: Colors.white)),
+      title: Text(label, style: const TextStyle(color: Colors.white)),
       leading: Icon(
         isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
         color: isSelected ? const Color(0xFF8B0000) : Colors.white70,
       ),
       onTap: () {
         Navigator.pop(context);
-        ref.read(articleListViewModelProvider.notifier).changeSortBy(value);
+        ref.read(articleListViewModelProvider.notifier).setSortBy(value);
       },
     );
   }
@@ -208,7 +208,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       isFav ? Icons.star : Icons.star_outline,
                       color: isFav
                           ? const Color(0xFF8B0000)
-                          : Colors.white.withOpacity(0.7),
+                          : Colors.white.withValues(alpha: 0.7),
                       size: 32,
                     ),
                     onPressed: () => _toggleFavorite(article),
@@ -223,21 +223,21 @@ class _HomePageState extends ConsumerState<HomePage> {
                   Text(
                     'par ${article.author}',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
                   ),
                   Text(
                     'Score: ${article.score}',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
                   ),
                   Text(
                     '${article.descendants} commentaires',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
                   ),

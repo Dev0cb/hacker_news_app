@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/repositories/article_repository.dart';
 import '../models/article.dart';
@@ -15,13 +16,12 @@ class ArticleListViewModel extends StateNotifier<ArticleListState> {
   }
 
   Future<void> _loadInitialData() async {
-    final appState = _ref.read(appStateProvider);
-
-    // Charger la page courante depuis l'état persistant
-    await loadArticles(page: appState.currentPage, refresh: false);
+    await loadArticles(page: 0, refresh: false);
   }
 
   Future<void> loadArticles({int page = 0, bool refresh = false}) async {
+    if (state.isLoading && !refresh) return;
+
     if (refresh) {
       // Pull-to-refresh : remettre à zéro
       state = state.copyWith(isLoading: true, error: null);
@@ -62,21 +62,13 @@ class ArticleListViewModel extends StateNotifier<ArticleListState> {
           hasMore: articles.length == _pageSize,
         );
       }
-
-      // Mettre à jour l'état global
-      _ref.read(appStateProvider.notifier).setCurrentPage(page);
-      if (refresh) {
-        _ref
-            .read(appStateProvider.notifier)
-            .setLastRefreshTime(DateTime.now().millisecondsSinceEpoch);
-      }
     } catch (e) {
+      debugPrint('ArticleListViewModel: Erreur lors du chargement: $e');
       state = state.copyWith(
         error: e.toString(),
         isLoading: false,
         isLoadingMore: false,
       );
-      print('Erreur dans ArticleListViewModel: $e');
     }
   }
 
@@ -99,9 +91,16 @@ class ArticleListViewModel extends StateNotifier<ArticleListState> {
     }
   }
 
-  Future<void> changeSortBy(String sortBy) async {
-    _ref.read(appStateProvider.notifier).setSortBy(sortBy);
-    await loadArticles(page: 0, refresh: true);
+  void setSortBy(String sortBy) {
+    if (state.sortBy != sortBy) {
+      state = state.copyWith(
+        sortBy: sortBy,
+        articles: [],
+        currentPage: 0,
+        hasMore: true,
+      );
+      loadArticles();
+    }
   }
 }
 
@@ -112,6 +111,7 @@ class ArticleListState {
   final bool hasMore;
   final String? error;
   final int currentPage;
+  final String sortBy;
 
   const ArticleListState({
     required this.articles,
@@ -120,6 +120,7 @@ class ArticleListState {
     required this.hasMore,
     this.error,
     required this.currentPage,
+    required this.sortBy,
   });
 
   factory ArticleListState.initial() => const ArticleListState(
@@ -128,6 +129,7 @@ class ArticleListState {
         isLoadingMore: false,
         hasMore: true,
         currentPage: 0,
+        sortBy: 'score',
       );
 
   ArticleListState copyWith({
@@ -137,6 +139,7 @@ class ArticleListState {
     bool? hasMore,
     String? error,
     int? currentPage,
+    String? sortBy,
   }) {
     return ArticleListState(
       articles: articles ?? this.articles,
@@ -145,6 +148,7 @@ class ArticleListState {
       hasMore: hasMore ?? this.hasMore,
       error: error ?? this.error,
       currentPage: currentPage ?? this.currentPage,
+      sortBy: sortBy ?? this.sortBy,
     );
   }
 }

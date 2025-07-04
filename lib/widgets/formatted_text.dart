@@ -129,26 +129,4 @@ class FormattedText extends StatelessWidget {
         text.startsWith('https://') ||
         text.startsWith('www.');
   }
-
-  void _openLink(BuildContext context, String url) {
-    HapticFeedback.lightImpact();
-
-    // Ajouter https:// si nécessaire
-    String finalUrl = url;
-    if (url.startsWith('www.')) {
-      finalUrl = 'https://$url';
-    }
-
-    launchUrl(
-      Uri.parse(finalUrl),
-      mode: LaunchMode.externalApplication,
-    ).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Impossible d\'ouvrir le lien: $url'),
-          backgroundColor: const Color(0xFF8B0000),
-        ),
-      );
-    });
-  }
 }

@@ -16,7 +16,6 @@ Application Flutter complète avec design Hacker News qui affiche les articles, 
 - **Page dédiée** pour consulter les favoris
 - **Sauvegarde locale** automatique des articles (SQLite)
 - **Lecture prioritaire** depuis la base locale pour limiter les appels API
-- **Nettoyage automatique** des articles non favoris disparus de l'API
 - **Architecture robuste** : MVVM + Repository avec Riverpod
 - **Design responsive** : thème Hacker News (rouge foncé, noir, blanc) sans overflow
 
@@ -95,7 +94,6 @@ Application Flutter complète avec design Hacker News qui affiche les articles, 
 - url_launcher
 - **🆕 html** : Parsing HTML
 - **🆕 cached_network_image** : Cache d'images
-- **🆕 webview_flutter** : Affichage web (pour usage futur)
 
 ## 📁 Structure du projet
 
@@ -136,7 +134,7 @@ lib/
 1. Clone le repository
 2. Lance `flutter pub get`
 3. Lance l'application : `flutter run`
-4. **Note** : Si tu as déjà lancé une ancienne version, désinstalle l'app pour réinitialiser la base locale
+4. **Note** : L'application gère automatiquement la migration de la base de données
 
 ## ✅ Statut final
 
@@ -149,7 +147,31 @@ lib/
 - ✅ **Design moderne** : thème Hacker News cohérent et attractif
 - ✅ **Responsive** : pas d'overflow, s'adapte à tous les écrans
 - ✅ **Robustesse** : gestion des erreurs, persistance d'état, optimistic updates
+- ✅ **Base de données corrigée** : Migration automatique et structure cohérente
 - ✅ **Prêt pour production** ou soutenance
+
+## 🐛 Corrections récentes
+
+### **Base de données SQLite**
+
+- **Migration automatique** : Gestion des versions de base de données
+- **Structure cohérente** : Colonnes `commentIds` et `isFavorite` ajoutées
+- **Suppression automatique** : Nettoyage de l'ancienne base en cas de conflit
+- **Gestion d'erreurs** : Fallback robuste en cas de problème de base
+
+### **Architecture et performance**
+
+- **Repository simplifié** : Logique de chargement optimisée
+- **ViewModel corrigé** : Méthodes cohérentes avec l'état global
+- **Gestion d'état** : Optimistic updates pour les favoris
+- **Cache intelligent** : Chargement prioritaire depuis la base locale
+
+### **Code et qualité**
+
+- **Imports nettoyés** : Suppression des imports inutilisés
+- **Variables corrigées** : Suppression des variables inutilisées
+- **Méthodes cohérentes** : Utilisation des bonnes méthodes dans tous les composants
+- **Gestion d'erreurs** : Logs de débogage appropriés avec `debugPrint`
 
 ## 🎉 Fonctionnalités validées
 
@@ -162,7 +184,6 @@ lib/
 - Ajout/suppression d'articles favoris avec feedback visuel et haptic
 - Persistance des favoris même si l'article disparaît de l'API
 - Sauvegarde locale automatique des articles
-- Nettoyage automatique des articles obsolètes non favoris
 - Interface responsive sans overflow sur tous les écrans
 - **Pagination** : Chargement par pages de 20 articles
 - **Pull-to-refresh** : Actualisation avec geste de swipe

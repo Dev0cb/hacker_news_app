@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/comment.dart';
 import '../data/api/hacker_news_api.dart';
-import '../widgets/comment_tree.dart';
 import '../widgets/formatted_text.dart';
 
 class CommentDetailPage extends StatefulWidget {

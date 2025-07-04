@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/article.dart';
 import '../core/app_state.dart';
-import '../widgets/skeleton_loading.dart';
 import '../widgets/comment_tree.dart';
 import '../widgets/article_content_view.dart';
 import 'comment_detail_page.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/app_state.dart';
-import '../models/article.dart';
 import 'article_detail_page.dart';
 
 class FavoritesPage extends ConsumerWidget {

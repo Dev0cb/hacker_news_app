@@ -87,7 +87,7 @@ class CommentTree extends StatelessWidget {
             if (comment.children.isNotEmpty)
               ...comment.children
                   .map((child) => _buildComment(context, child, depth + 1))
-                  .toList(),
+                  ,
           ],
         ),
       ),

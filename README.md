@@ -1,101 +1,73 @@
-# 📰 Hacker News Flutter App
+# Hacker News Flutter App
 
-## 🎯 Objectif
+## Objectif
 
-Application Flutter complète avec design Hacker News qui affiche les articles, permet de lire les commentaires (et sous-commentaires) avec navigation fluide, de gérer les favoris persistants et de stocker les articles localement, même si ceux-ci disparaissent de l'API. **Nouveau : Affichage du contenu complet des articles et parsing HTML des commentaires !**
+Ce projet consiste à développer une application mobile Flutter inspirée de la plateforme Hacker News. L'application permet d'afficher une liste d'articles, de consulter leur contenu, de lire les commentaires et sous-commentaires, et de gérer une liste de favoris. Elle met en œuvre des fonctionnalités avancées telles que la persistance locale des données et une navigation fluide et responsive.
 
-## 🚀 Fonctionnalités principales
+## Fonctionnalités principales
 
-- **Affichage dynamique** des articles Hacker News (titre, auteur, nombre de commentaires, score)
-- **Navigation fluide** vers la page de détail d'un article
-- **Lecture des commentaires** avec scroll global et affichage récursif/arborescent
-- **🆕 Contenu complet des articles** : Récupération et affichage du contenu web des articles
-- **🆕 Parsing HTML des commentaires** : Affichage formaté avec liens cliquables, gras, italique, code
-- **Ouverture des liens** d'articles dans le navigateur avec design attractif
-- **Gestion des favoris** : ajout/suppression avec persistance même si l'article disparaît de l'API
-- **Page dédiée** pour consulter les favoris
-- **Sauvegarde locale** automatique des articles (SQLite)
-- **Lecture prioritaire** depuis la base locale pour limiter les appels API
-- **Architecture robuste** : MVVM + Repository avec Riverpod
-- **Design responsive** : thème Hacker News (rouge foncé, noir, blanc) sans overflow
+- Affichage dynamique des articles avec titre, auteur, nombre de commentaires et score.
+- Navigation vers la page de détail d’un article.
+- Lecture complète des commentaires avec affichage hiérarchique et navigation fluide.
+- Possibilité d’ajouter ou de retirer des articles des favoris avec persistance locale.
+- Page dédiée aux articles favoris.
+- Sauvegarde locale des articles en base SQLite.
+- Priorisation des lectures depuis la base locale pour optimiser les appels à l’API.
+- Architecture robuste basée sur le modèle MVVM et le pattern Repository avec Riverpod.
+- Interface responsive et moderne adaptée à tous les formats d'écran.
 
-## ⭐ **Nouvelles fonctionnalités avancées**
+## Fonctionnalités avancées
 
-### **🆕 Contenu des articles web**
+### Affichage du contenu des articles
 
-- **Récupération intelligente** : Parsing HTML avec sélecteurs multiples (Open Graph, Twitter Cards, meta tags)
-- **Extraction automatique** : Titre, description, image principale, contenu, liens, images
-- **Headers réalistes** : Évite les blocages avec User-Agent et headers de navigateur
-- **Gestion d'erreurs robuste** : Timeout, retry, fallback vers le texte original
-- **URLs relatives** : Résolution automatique vers URLs absolues
-- **Nettoyage intelligent** : Suppression des scripts, navigation, commentaires HTML
+- Extraction automatisée du titre, de la description, de l’image principale, du contenu textuel et des liens d’un article.
+- Mise en forme soignée avec résolutions automatiques des URLs et nettoyage des éléments inutiles.
+- Gestion robuste des erreurs réseau (timeout, retry) avec solutions de repli.
+- Utilisation d’en-têtes HTTP réalistes pour améliorer la compatibilité avec les serveurs distants.
 
-### **🆕 Parsing HTML des commentaires**
+### Traitement et affichage des commentaires HTML
 
-- **Conversion HTML → Markdown** : Liens, gras, italique, code, listes, citations
-- **Liens cliquables** : Ouverture dans le navigateur externe avec haptic feedback
-- **Formatage visuel** : **Gras**, _italique_, `` `code` ``, `blocs de code`
-- **URLs directes** : Détection et ouverture automatique des liens
-- **Listes et citations** : Affichage formaté avec puces et indentation
-- **Gestion d'erreurs** : Fallback vers le texte original en cas d'échec
+- Conversion HTML vers un format texte enrichi (liens cliquables, gras, italique, blocs de code).
+- Affichage formaté et lisible des sous-commentaires.
+- Prise en charge des listes, citations, et structures imbriquées.
+- Gestion d’erreurs avec retour au texte brut en cas d’échec de parsing.
 
-### **Gestion d'état avancée**
+## Gestion de l’état
 
-- **State persistence** : Sauvegarde automatique de l'état entre les sessions
-- **Optimistic updates** : Mise à jour immédiate de l'UI pour les favoris
-- **Error boundaries** : Gestion robuste des erreurs avec retry
+- Persistance automatique de l’état entre les sessions.
+- Mise à jour optimiste de l’interface pour une meilleure réactivité.
+- Gestion robuste des erreurs dans la logique applicative.
 
-### **Performance et UX**
+## Expérience utilisateur et performance
 
-- **Pagination** : Chargement par pages de 20 articles (évite de charger 500 articles d'un coup)
-- **Pull-to-refresh** : Actualisation de la liste avec geste de swipe
-- **Skeleton loading** : Animations de chargement élégantes au lieu des spinners
-- **Animations fluides** : Transitions entre pages avec CupertinoPageTransitionsBuilder
-- **Haptic feedback** : Retour tactile sur les actions importantes
-- **Cache d'images** : Chargement optimisé avec CachedNetworkImage
+- Chargement paginé des articles (par blocs de 20) pour éviter les surcharges mémoire.
+- Actualisation par geste (pull-to-refresh).
+- Animations fluides (skeleton loading, transitions entre pages).
+- Mise en cache des images pour un chargement optimisé.
+- Retour tactile sur certaines actions utilisateur (haptic feedback).
+- Interface moderne avec tri par date, score ou nombre de commentaires.
 
-### **Interface utilisateur**
+## Architecture logicielle
 
-- **Tri intelligent** : Par score, date, nombre de commentaires
-- **Navigation intuitive** : Boutons de tri et favoris dans l'AppBar
-- **Design moderne** : Cards avec bordures arrondies et ombres
-- **Responsive design** : S'adapte à toutes les tailles d'écran
+- Architecture MVVM avec séparation claire des responsabilités.
+- Utilisation de Riverpod pour la gestion d'état.
+- Persistance locale avec SQLite.
+- Intégration de l’API officielle Hacker News via Firebase.
+- Services spécifiques pour la récupération du contenu web et le traitement HTML.
+- Mise en cache et gestion de l’état avec SharedPreferences.
 
-## 🎨 Design & UX
+## Packages utilisés
 
-- **Thème Hacker News** : Rouge foncé (#8B0000), noir, blanc
-- **Interface moderne** : Cards avec bordures arrondies et ombres
-- **Navigation intuitive** : Boutons et icônes cohérents
-- **Responsive design** : S'adapte à toutes les tailles d'écran
-- **États visuels** : Loading, erreurs, vides avec icônes et messages
-- **Commentaires** : Affichage arborescent avec timestamps et formatage HTML
-- **Favoris** : Étoiles rouge foncé avec feedback visuel
-- **Skeleton loading** : Animations de chargement élégantes
-- **Haptic feedback** : Retour tactile sur les interactions
+- `flutter_riverpod`
+- `http`
+- `sqflite`
+- `path_provider`
+- `shared_preferences`
+- `url_launcher`
+- `html`
+- `cached_network_image`
 
-## 🏗️ Architecture
-
-- **MVVM + Repository** : séparation claire des responsabilités
-- **Riverpod** : gestion d'état moderne et performante
-- **SQLite** : stockage local des articles et favoris
-- **API Hacker News** : récupération des données via l'API officielle Firebase
-- **🆕 ArticleContentService** : Récupération et parsing du contenu web
-- **🆕 HtmlParser** : Conversion HTML vers texte formaté
-- **State persistence** : Sauvegarde automatique avec SharedPreferences
-- **Optimistic updates** : Mise à jour immédiate de l'UI
-
-## 📦 Packages principaux
-
-- flutter_riverpod
-- http
-- sqflite
-- path_provider
-- shared_preferences
-- url_launcher
-- **🆕 html** : Parsing HTML
-- **🆕 cached_network_image** : Cache d'images
-
-## 📁 Structure du projet
+## Organisation du projet
 
 ```
 lib/
@@ -105,7 +77,7 @@ lib/
 ├── data/
 │   ├── api/
 │   │   ├── hacker_news_api.dart # API Hacker News optimisée
-│   │   └── article_content_service.dart # 🆕 Service de récupération de contenu web
+│   │   └── article_content_service.dart #  Service de récupération de contenu web
 │   ├── db/
 │   │   └── database_helper.dart # SQLite avec pagination et tri
 │   └── repositories/
@@ -114,7 +86,7 @@ lib/
 │   ├── article.dart             # Modèle Article avec sérialisation
 │   └── comment.dart             # Modèle Comment avec arborescence
 ├── utils/
-│   └── html_parser.dart         # 🆕 Parser HTML pour commentaires
+│   └── html_parser.dart         #  Parser HTML pour commentaires
 ├── viewmodels/
 │   └── article_list_vm.dart     # Gestion des articles avec pagination
 ├── views/
@@ -123,155 +95,46 @@ lib/
 │   ├── comment_detail_page.dart # Page de détail des commentaires
 │   └── favorites_page.dart      # Page des favoris (cohérente)
 └── widgets/
-    ├── article_content_view.dart # 🆕 Affichage du contenu des articles
+    ├── article_content_view.dart #  Affichage du contenu des articles
     ├── comment_tree.dart        # Affichage récursif des commentaires
-    ├── formatted_text.dart      # 🆕 Widget de texte formaté avec HTML
+    ├── formatted_text.dart      #  Widget de texte formaté avec HTML
     └── skeleton_loading.dart    # Animations de chargement élégantes
 ```
 
-## ⚡ Installation et lancement
 
-1. Clone le repository
-2. Lance `flutter pub get`
-3. Lance l'application : `flutter run`
-4. **Note** : L'application gère automatiquement la migration de la base de données
+## Installation
 
-## ✅ Statut final
+1. Cloner le dépôt.
+2. Exécuter `flutter pub get` pour récupérer les dépendances.
+3. Lancer l’application avec `flutter run`.
+4. Aucune configuration manuelle supplémentaire n’est requise : la base de données locale est automatiquement gérée.
 
-- ✅ **Toutes les fonctionnalités** demandées sont implémentées et testées
-- ✅ **🆕 Contenu des articles** : Récupération et affichage complet du contenu web
-- ✅ **🆕 Parsing HTML** : Commentaires formatés avec liens cliquables
-- ✅ **Code propre** : pas de TODO, imports nettoyés, gestion d'erreurs
-- ✅ **Performance optimisée** : pagination, cache local, appels API parallélisés
-- ✅ **UX fluide** : navigation, pull-to-refresh, skeleton loading, haptic feedback
-- ✅ **Design moderne** : thème Hacker News cohérent et attractif
-- ✅ **Responsive** : pas d'overflow, s'adapte à tous les écrans
-- ✅ **Robustesse** : gestion des erreurs, persistance d'état, optimistic updates
-- ✅ **Base de données corrigée** : Migration automatique et structure cohérente
-- ✅ **Prêt pour production** ou soutenance
+## État du projet
 
-## 🐛 Corrections récentes
+Toutes les fonctionnalités spécifiées ont été implémentées et validées :
 
-### **Base de données SQLite**
+- Interface fonctionnelle et responsive.
+- Sauvegarde et chargement locaux des données.
+- Gestion des favoris avec persistance.
+- Consultation du contenu enrichi des articles.
+- Lecture des commentaires avec mise en forme avancée.
+- Architecture modulaire et robuste.
+- Code propre et bien structuré, sans dépendances inutiles.
 
-- **Migration automatique** : Gestion des versions de base de données
-- **Structure cohérente** : Colonnes `commentIds` et `isFavorite` ajoutées
-- **Suppression automatique** : Nettoyage de l'ancienne base en cas de conflit
-- **Gestion d'erreurs** : Fallback robuste en cas de problème de base
+## Améliorations techniques
 
-### **Architecture et performance**
+- Gestion automatique des migrations de la base de données.
+- Fallback intelligent en cas de problème lors de la récupération des contenus.
+- Chargement optimisé grâce au cache local et à la pagination.
+- Nettoyage du code : suppression des imports et variables non utilisés.
+- Logs de débogage limités à `debugPrint` pour les erreurs majeures.
 
-- **Repository simplifié** : Logique de chargement optimisée
-- **ViewModel corrigé** : Méthodes cohérentes avec l'état global
-- **Gestion d'état** : Optimistic updates pour les favoris
-- **Cache intelligent** : Chargement prioritaire depuis la base locale
+## Palette de couleurs
 
-### **Code et qualité**
-
-- **Imports nettoyés** : Suppression des imports inutilisés
-- **Variables corrigées** : Suppression des variables inutilisées
-- **Méthodes cohérentes** : Utilisation des bonnes méthodes dans tous les composants
-- **Gestion d'erreurs** : Logs de débogage appropriés avec `debugPrint`
-
-## 🎉 Fonctionnalités validées
-
-- Affichage de la liste des articles avec métadonnées (auteur, score, commentaires)
-- Navigation vers le détail d'un article avec design card moderne
-- **🆕 Contenu complet des articles** : Titre, description, image, contenu, liens, images
-- **🆕 Parsing HTML des commentaires** : Liens cliquables, gras, italique, code, listes
-- Lecture complète des commentaires avec scroll global et hiérarchie visuelle
-- Ouverture des liens d'articles dans le navigateur avec design attractif
-- Ajout/suppression d'articles favoris avec feedback visuel et haptic
-- Persistance des favoris même si l'article disparaît de l'API
-- Sauvegarde locale automatique des articles
-- Interface responsive sans overflow sur tous les écrans
-- **Pagination** : Chargement par pages de 20 articles
-- **Pull-to-refresh** : Actualisation avec geste de swipe
-- **Skeleton loading** : Animations de chargement élégantes
-- **Tri intelligent** : Par score, date, nombre de commentaires
-- **State persistence** : Sauvegarde automatique de l'état
-- **Optimistic updates** : Mise à jour immédiate de l'UI
-- **Haptic feedback** : Retour tactile sur les interactions
-
-## 🎨 Palette de couleurs
-
-- **Rouge foncé Hacker News** : #8B0000 (actions principales, accents)
-- **Noir** : #000000 (arrière-plan principal)
-- **Gris sombre** : #1A1A1A (cards, conteneurs)
-- **Blanc** : #FFFFFF (texte principal)
-- **Blanc 70%** : #FFFFFF avec 0.7 opacity (texte secondaire)
-
-## 🔧 Améliorations techniques implémentées
-
-### **🆕 Récupération de contenu web**
-
-- **Sélecteurs intelligents** : Open Graph, Twitter Cards, meta tags, classes communes
-- **Headers réalistes** : User-Agent, Accept, Accept-Language pour éviter les blocages
-- **Parsing robuste** : Gestion des erreurs, timeout, fallback
-- **Nettoyage automatique** : Suppression scripts, navigation, commentaires HTML
-- **URLs relatives** : Résolution automatique vers URLs absolues
-
-### **🆕 Parsing HTML des commentaires**
-
-- **Conversion HTML → Markdown** : Liens, gras, italique, code, listes, citations
-- **Liens cliquables** : Ouverture dans le navigateur avec haptic feedback
-- **Formatage visuel** : **Gras**, _italique_, `` `code` ``, `blocs de code`
-- **URLs directes** : Détection et ouverture automatique
-- **Gestion d'erreurs** : Fallback vers le texte original
-
-### **Performance**
-
-- Pagination pour éviter le chargement de 500 articles
-- Cache local avec SQLite
-- Appels API optimisés avec Future.wait
-- Skeleton loading pour une UX fluide
-- **🆕 Cache d'images** avec CachedNetworkImage
-
-### **UX/UI**
-
-- Pull-to-refresh pour actualiser la liste
-- Haptic feedback sur les interactions
-- Animations de transition fluides
-- Tri intelligent des articles
-- Design responsive et moderne
-- **🆕 États de chargement** pour le contenu web
-
-### **Robustesse**
-
-- Gestion d'erreurs avec retry
-- State persistence entre sessions
-- Optimistic updates pour les favoris
-- Validation des données
-- **🆕 Timeout et fallback** pour la récupération de contenu
-
-## 🚀 Exemples de fonctionnalités
-
-### **Contenu d'article récupéré :**
-
-```dart
-ArticleContent(
-  title: "Titre de l'article",
-  description: "Description de l'article",
-  mainImage: "https://example.com/image.jpg",
-  content: "Contenu principal de l'article...",
-  images: ["https://example.com/image.jpg", "https://example.com/image2.jpg"],
-  links: ["https://example.com/link1", "https://example.com/link2"],
-  url: "https://example.com/article"
-)
-```
-
-### **Commentaire HTML parsé :**
-
-```html
-<!-- HTML original -->
-<p>
-  Voici un <a href="https://example.com">lien</a> et du <strong>gras</strong>.
-</p>
-
-<!-- Texte formaté -->
-Voici un [lien](https://example.com) et du **gras**.
-```
-
----
-
-**Application complète, moderne et professionnelle avec contenu web et parsing HTML, prête pour la livraison !** 🚀
+| Élément            | Couleur       | Description                        |
+|--------------------|---------------|------------------------------------|
+| Accent principal   | #8B0000       | Rouge Hacker News                  |
+| Fond principal     | #000000       | Noir                               |
+| Conteneurs         | #1A1A1A       | Gris sombre                        |
+| Texte principal    | #FFFFFF       | Blanc pur                          |
+| Texte secondaire   | #FFFFFF (70%) | Blanc semi-transparent             |

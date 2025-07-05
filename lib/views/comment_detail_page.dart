@@ -114,7 +114,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   ],
                 ),
@@ -212,7 +212,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
             // Replies section
             Row(
               children: [
-                Icon(Icons.reply, color: const Color(0xFF8B0000), size: 24),
+                const Icon(Icons.reply, color: Color(0xFF8B0000), size: 24),
                 const SizedBox(width: 8),
                 Text(
                   'Réponses (${widget.comment.childIds.length})',
@@ -301,7 +301,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
         contentPadding: const EdgeInsets.all(12),
         title: Row(
           children: [
-            Icon(Icons.person, color: const Color(0xFF8B0000), size: 16),
+            const Icon(Icons.person, color: Color(0xFF8B0000), size: 16),
             const SizedBox(width: 8),
             Flexible(
               child: Text(

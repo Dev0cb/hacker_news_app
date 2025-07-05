@@ -105,10 +105,10 @@ class FavoritesPage extends ConsumerWidget {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.trending_up,
                               size: 16,
-                              color: const Color(0xFF8B0000),
+                              color: Color(0xFF8B0000),
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -119,10 +119,10 @@ class FavoritesPage extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            Icon(
+                            const Icon(
                               Icons.comment,
                               size: 16,
-                              color: const Color(0xFF8B0000),
+                              color: Color(0xFF8B0000),
                             ),
                             const SizedBox(width: 4),
                             Text(

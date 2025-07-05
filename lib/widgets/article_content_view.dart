@@ -212,15 +212,15 @@ class _ArticleContentViewState extends State<ArticleContentView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.description,
                       color: Color(0xFF8B0000),
                       size: 20,
                     ),
-                    const SizedBox(width: 8),
-                    const Text(
+                    SizedBox(width: 8),
+                    Text(
                       'Résumé',
                       style: TextStyle(
                         color: Color(0xFF8B0000),
@@ -260,15 +260,15 @@ class _ArticleContentViewState extends State<ArticleContentView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.article,
                       color: Color(0xFF8B0000),
                       size: 20,
                     ),
-                    const SizedBox(width: 8),
-                    const Text(
+                    SizedBox(width: 8),
+                    Text(
                       'Contenu',
                       style: TextStyle(
                         color: Color(0xFF8B0000),

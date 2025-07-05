@@ -50,10 +50,10 @@ class _SkeletonLoadingState extends State<SkeletonLoading>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                const Color(0xFF2A2A2A),
-                const Color(0xFF3A3A3A),
-                const Color(0xFF2A2A2A),
+              colors: const [
+                Color(0xFF2A2A2A),
+                Color(0xFF3A3A3A),
+                Color(0xFF2A2A2A),
               ],
               stops: [
                 _animation.value - 0.3,
@@ -73,26 +73,26 @@ class ArticleSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return const Card(
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Titre
-            const SkeletonLoading(height: 20, width: double.infinity),
-            const SizedBox(height: 8),
-            const SkeletonLoading(height: 16, width: 200),
-            const SizedBox(height: 8),
+            SkeletonLoading(height: 20, width: double.infinity),
+            SizedBox(height: 8),
+            SkeletonLoading(height: 16, width: 200),
+            SizedBox(height: 8),
             // Métadonnées
             Row(
               children: [
-                const SkeletonLoading(height: 12, width: 80),
-                const SizedBox(width: 16),
-                const SkeletonLoading(height: 12, width: 60),
-                const SizedBox(width: 16),
-                const SkeletonLoading(height: 12, width: 100),
+                SkeletonLoading(height: 12, width: 80),
+                SizedBox(width: 16),
+                SkeletonLoading(height: 12, width: 60),
+                SizedBox(width: 16),
+                SkeletonLoading(height: 12, width: 100),
               ],
             ),
           ],
@@ -111,26 +111,26 @@ class CommentSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: depth * 16.0),
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 4),
+      child: const Card(
+        margin: EdgeInsets.symmetric(vertical: 4),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Auteur et temps
               Row(
                 children: [
-                  const SkeletonLoading(height: 12, width: 100),
-                  const SizedBox(width: 8),
-                  const SkeletonLoading(height: 12, width: 80),
+                  SkeletonLoading(height: 12, width: 100),
+                  SizedBox(width: 8),
+                  SkeletonLoading(height: 12, width: 80),
                 ],
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               // Contenu
-              const SkeletonLoading(height: 16, width: double.infinity),
-              const SizedBox(height: 4),
-              const SkeletonLoading(height: 16, width: 250),
+              SkeletonLoading(height: 16, width: double.infinity),
+              SizedBox(height: 4),
+              SkeletonLoading(height: 16, width: 250),
             ],
           ),
         ),

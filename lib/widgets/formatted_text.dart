@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../utils/html_parser.dart';
 
 class FormattedText extends StatelessWidget {
